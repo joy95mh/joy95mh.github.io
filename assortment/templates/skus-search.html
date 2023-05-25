@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+    <!-- <h1 style="text-align: center;">LAZADA</h1> -->
+    <form class="text">
+        
+        <div class="topnav">
+            <input style="float: left;" id="filter1" name="filter1" value="{{ filter1 }}" type="text" placeholder="Search domain netloc/product url..">
+            <button type="submit" id="search-btn">SEARCH</button>
+            <button id="export-btn" type="button" style="margin-left: 10px; margin-left: 300px; width: 200px;" onclick="exportToXLSX()">Export Excel</button>
+            <div id="loading-icon">
+                <div class="progress"></div>
+              </div>
+            <script>
+                // Get the circular progress bar
+                var progress = document.querySelector(".progress");
+                // Get the loading icon container
+                var loadingIcon = document.querySelector("#loading-icon");
+
+                // Add a load event listener to the window
+                window.addEventListener("load", function() {
+                // Fade out the loading icon when the page is loaded
+                loadingIcon.style.opacity = "0";
+                // Wait for the animation to finish before hiding the loading icon
+                setTimeout(function() {
+                    loadingIcon.style.display = "none";
+                }, 500);
+                }); 
+                </script>
+            <h1 style="float: right; margin-right: 200px;">SKUS SEARCH</h1>
+        </div>
+    </form>
+    <p class="text" style="font-size: medium; font-style: italic; margin-left: 3px;">{% if count > 0 %}Display <b>{{count}}</b> row(s) {% else %} No rows found. {% endif %}{% if count_all > 0 %} in total <b style="color: red;">{{count_all}}</b> row(s). {% else %}{% endif %} (page {{page}})</p>
+    <div class="pagination">
+        {% if has_prev %}
+            <a class="page-link" href="{{ url_for('skus_search', page=page-1, filter1=filter1, limit=limit) }}">&laquo; Prev</a>
+        {% else %}
+            <span class="page-link disabled">&laquo; Prev</span>
+        {% endif %}
+    
+        {% for num in page_nums %}
+            {% if num == '...' %}
+                <span class="page-link disabled">{{ num }}</span>
+            {% elif num == page %}
+                <span class="page-item active"><span class="page-link">{{ num }}</span></span>
+            {% else %}
+                <a class="page-link" href="{{ url_for('skus_search', page=num, filter1=filter1, limit=limit) }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        <span class="page-link">Page {{page}} of {{max_page}}</span>
+    
+        {% if has_next %}
+            <a class="page-link" href="{{ url_for('skus_search', page=page+1, filter1=filter1, limit=limit) }}">Next &raquo;</a>
+        {% else %}
+            <span class="page-link disabled">Next &raquo;</span>
+        {% endif %}
+    </div>
+    
+    <table id="results-table">
+        <tr>
+            {% for column_name in column_names %}
+                <th>{{column_name}}</th>
+            {% endfor %}
+        </tr>
+    
+        {% for row in data %}
+            <tr>
+                {% for column in row %}
+                    <td class="wraptext">{{ column }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    
+    
+    <script>
+        function exportToXLSX() {
+            // Get the button element and disable it
+            const btn = document.getElementById('export-btn');
+            btn.disabled = true;
+    
+            // Add a Font Awesome icon to the button
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+    
+            const filter1 = "{{ filter1 }}";
+            const regex = /-i\.\d+\.\d+/;
+            if (regex.test(filter1)) {
+                alert('Can not export product URL. Please enter domain netloc and SEARCH again.');
+                btn.disabled = false;
+                btn.innerHTML = 'Export Excel';
+                return;
+            }
+    
+            const url = "{{ url_for('export_to_xlsx', filter1=filter1, limit=3200) }}";
+            fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "[{{ filter1 }}].xlsx";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+    
+                // Remove the Font Awesome icon and restore the button text
+                btn.innerHTML = 'Export Excel';
+                btn.disabled = false;
+            });
+        }
+    </script>
+
+{% endblock %}

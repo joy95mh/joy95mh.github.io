@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assortment</title>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="tab">
+        <a href="/">SKUS RUN</a>
+        <a href="/skus-search">SKUS SEARCH</a>
+        <a href="/skus-xpath">SKUS XPATH</a>
+        <a href="/shopee-checkrun">SHOPEE CHECKRUN</a> 
+        <p class="projectname">Assortment</p>
+    </div>
+<!-- <h1 style="text-align: center;">LAZADA</h1> -->
+    <script>
+        // Get the current URL
+        var currentURL = window.location.pathname;
+    
+        // Find the corresponding navigation link
+        var links = document.querySelectorAll("div a");
+        for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        var linkURL = link.getAttribute("href");
+        if (linkURL === currentURL) {
+            link.classList.add("active");
+        }
+        }
+    </script>
+    <!-- <h1 style="text-align: center;">LAZADA</h1> -->
+    {% block content %}{% endblock %}
+
+    
+</body>
+</html>

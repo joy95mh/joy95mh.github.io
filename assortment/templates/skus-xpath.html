@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+    <form class="text">
+        <div class="topnav">
+            <input style="float: left;" id="filter1" name="filter1" value="{{ filter1 }}" type="text" placeholder="Search domain netloc..">
+            <button type="submit">SEARCH</button>
+            <h1 style="float: right; margin-right: 200px;">SKUS XPATH</h1>
+        </div>
+    </form>
+    <p class="text" style="font-size: medium; color: red; font-style: italic; margin-left: 3px;">{% if count > 0 %}{{count}} row(s) {% else %} No rows found. {% endif %}</p>
+    <table id="results-table">
+        <tr>
+            {% for column_name in column_names %}
+            <th>{{column_name}}</th>
+            {% endfor %}
+            
+            
+        </tr>
+        {% for row in data %}
+            <tr>
+                {% for column in row %}
+                    <td class="fulltext">{{ column }}</td>
+                {% endfor %}
+            </tr>
+            
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+<style>
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 800px;
+        margin-left: 10px;;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border-radius: 5px;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .col {
+        flex-basis: calc(50% - 10px);
+    }
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    input[type="text"] {
+        padding: 10px;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+
+    }
+    input[type="submit"], input[type="button"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: large;
+    }
+    input[type="submit"]:hover {
+        background-color: #3e8e41;
+    }
+    </style>
+    <!-- <h1 style="float: right; margin-right: 200px;">SKUS RUN</h1> -->
+    <div class="row">
+        <div class="col form-col">
+            <form id="my-form" method="POST" action="/">
+                <div class="row">
+                    <div class="col">
+                        <label for="domain_netloc">domain_netloc*</label>
+                        <input type="text" id="domain_netloc" name="domain_netloc" required>
+            
+                        <label for="start_link">start_link</label>
+                        <input type="text" id="start_link" name="start_link" >
+            
+                        <label for="xcategory_link">xcategory_link</label>
+                        <input type="text" id="xcategory_link" name="xcategory_link">
+            
+                        <label for="xproduct_link">xproduct_link</label>
+                        <input type="text" id="xproduct_link" name="xproduct_link">
+            
+                        <label for="xnext_link">xnext_link</label>
+                        <input type="text" id="xnext_link" name="xnext_link">
+            
+                        <label for="xname">xname</label>
+                        <input type="text" id="xname" name="xname">
+            
+                    </div>
+                    <div class="col">
+                        <label for="xprice">xprice</label>
+                        <input type="text" id="xprice" name="xprice">
+            
+                        <label for="xprice_online">xprice_online</label>
+                        <input type="text" id="xprice_online" name="xprice_online">
+            
+                        <label for="ximage">ximage</label>
+                        <input type="text" id="ximage" name="ximage">
+            
+                        <label for="xdescription">xdescription</label>
+                        <input type="text" id="xdescription" name="xdescription">
+            
+                        <label for="xdescription_content">xdescription_content</label>
+                        <input type="text" id="xdescription_content" name="xdescription_content">
+            
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="submit" value="Update Xpath" id="submit-btn">
+                        <span id="result"></span>
+                    </div>
+                    <div class="col">
+                        <input type="button" value="Check Xpath" id="check-xpath-btn">
+                        <input style="float: right;" type="button" value="RUN Domain" id="run-btn" onclick="runDomain()">
+                        <span id="result1"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col text-area-col">
+            <textarea style="background-color: #f2f2f2;" id="process-output" cols="100" rows="27" readonly></textarea>
+        </div>
+        	
+        
+    </div>
+
+    
+    
+    
+    <div id="results-container">
+        <table id="results-table">
+            <tr>
+                {% for column_name in column_names %}
+                <th>{{column_name}}</th>
+                {% endfor %}
+        
+        
+            </tr>
+            {% for row in data %}
+                <tr>
+                    {% for column in row %}
+                        <td class="fulltext" data-input-id="domain_netloc">{{ column }}</td>
+                    {% endfor %}
+                </tr>
+        
+            {% endfor %}
+        </table>
+</div>
+</div>
+    
+    <script>
+        
+
+        document.getElementById("submit-btn").addEventListener("click", function() {
+        const domainNetloc = document.getElementById('domain_netloc').value.trim();
+        if (domainNetloc === '') {
+                alert('Please enter a domain_netloc');
+                return;
+            }
+        else{
+            var inputFields = document.querySelectorAll("input[type='text']");
+            inputFields.forEach(function(field) {
+                if (field.value.trim() === "") {
+                field.value = "null";
+                }
+            });
+        }
+        
+        });
+    </script>
+
+    <script>
+
+        const form = document.getElementById('my-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultSpan = document.getElementById('result')
+        
+        form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the form from being submitted
+        const formData = new FormData(form);
+        fetch('/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(data, 'text/html');
+            const table = htmlDoc.getElementById('results-table');
+            document.getElementById('results-container').innerHTML = '';
+            document.getElementById('results-container').appendChild(table);
+        })
+        .catch(error => console.error(error));
+        resultSpan.innerText = 'Connected!';
+        });
+      </script>
+
+        <script>
+            const checkXpathBtn = document.getElementById('check-xpath-btn');
+
+            checkXpathBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                const domainNetloc = document.getElementById('domain_netloc').value.trim();
+
+                if (domainNetloc === '') {
+                    alert('Please enter a domain_netloc');
+                    return;
+                } else {
+                    fetch(`/skus-xpath?filter1=${domainNetloc}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            const parser = new DOMParser();
+                            const htmlDoc = parser.parseFromString(data, 'text/html');
+                            const table = htmlDoc.getElementById('results-table');
+                            document.getElementById('results-container').innerHTML = '';
+                            document.getElementById('results-container').appendChild(table);
+
+                            const columnNames = Array.from(document.querySelectorAll('#results-table th')).map(th => th.textContent.trim());
+                            const inputs = document.querySelectorAll('input[type="text"]');
+                            const cells = table.querySelectorAll('.fulltext');
+
+                            cells.forEach((cell, index) => {
+                                const inputValue = cell.textContent.trim();
+                                const columnName = columnNames[index];
+                                const input = Array.from(inputs).find(input => input.id === columnName);
+                                if (input) {
+                                    input.value = inputValue;
+                                }
+                            });
+                        })
+                        .catch(error => console.error(error));
+                }
+            });
+
+        </script>
+        <div class="modal fade" id="runModal" tabindex="-1" role="dialog" aria-labelledby="runModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="runModalLabel">Enter tool name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="tool-name" class="col-form-label">Script name:</label>
+                            <input type="text" class="form-control" id="tool-name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="run-domain-btn">Run</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        
+    	<script>
+            function runDomain() {
+              const domainNetloc = document.getElementById("domain_netloc").value.trim();
+              if (domainNetloc === "") {
+                alert("Please enter a value for domain_netloc");
+                return;
+              }
+            
+              // Show the modal
+              $('#runModal').modal('show');
+            
+              // Handle the click event of the "Run" button in the modal
+              $('#run-domain-btn').click(function () {
+                const toolName = document.getElementById("tool-name").value.trim();
+                if (toolName === "") {
+                  alert("Please enter a value for tool name");
+                  return;
+                }
+                $('#runModal').modal('hide');
+                    // Send the domain netloc and tool name to the server
+                    const resultSpan3 = document.getElementById('process-output');
+                    resultSpan3.value = domainNetloc + ' - ' + toolName + ' - Start running..\n';
+                    fetch(`/run-domain?domain_netloc=${encodeURIComponent(domainNetloc)}&tool_name=${encodeURIComponent(toolName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const resultSpan3 = document.getElementById('process-output');
+                        resultSpan3.value = `${domainNetloc} - ${data.message}\n`;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        const resultSpan3 = document.getElementById('process-output');
+                        resultSpan3.value = `${domainNetloc} - Error: ${error}\n`;
+                    })
+            
+              });
+            }
+            </script>
+        
+
+{% endblock %}

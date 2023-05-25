@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+
+<form class="text">
+  <div class="topnav">
+      <input style="float: left;" id="filter1" name="filter1" value="{{ filter1 }}" type="text" placeholder="Search..">
+      <button type="submit">SEARCH</button>
+
+      <select id="daybefore" name="daybefore">
+          <option value="1" selected>1 day</option>
+          <option value="2">2 days</option>
+          <option value="3">3 days</option>
+          <option value="4">4 days</option>
+          <option value="5">5 days</option>
+          <option value="6">6 days</option>
+          <option value="7">7 days</option>
+          <option value="8">8 days</option>
+          <option value="9">9 days</option>
+          <option value="10">10 days</option>
+          <option value="30">1 month</option>
+      </select>
+
+      <script>
+          // Get the select element
+          const select = document.getElementById("daybefore");
+
+          // Function to update the URL with the selected limit value
+          const updateUrl = (value) => {
+              const url = new URL(window.location.href);
+              url.searchParams.set("daybefore", value);
+              history.pushState({}, "", url);
+          };
+
+          // Add an event listener for the "change" event
+          select.addEventListener("change", () => {
+            // Store the selected value in localStorage
+            localStorage.setItem("selecteddaybefore", select.value);
+            // Update the URL with the selected value
+            updateUrl(select.value);
+
+            // Check if the selected value is "1"
+            if (select.value === "1") {
+              // If it is, set the value of the input box to the stored value
+              filter1.value = localStorage.getItem("selectedfilter1");
+            } else {
+              // If it isn't, set the value of the input box to an empty string
+              filter1.value = "";
+            }
+          });
+
+      </script>
+
+      <h1 style="float: right; margin-right: 200px;">SHOPEE CHECKRUN</h1>
+  </div>
+</form>
+<p class="text" style="font-size: medium; color: red; font-style: italic; margin-left: 3px;">{% if count > 0 %}{{count}} row(s) {% else %} No rows found. {% endif %}</p>
+<table>
+    <tr>
+        {% for column_name in column_names %}
+        <th>{{column_name}}</th>
+        {% endfor %}
+        
+        
+    </tr>
+    {% for row in data %}
+        <tr>
+            {% for column in row %}
+                <td class="fulltext">{{ column }}</td>
+            {% endfor %}
+        </tr>
+        
+    {% endfor %}
+</table>
+
+    
+{% endblock %}

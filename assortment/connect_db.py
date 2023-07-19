@@ -30,11 +30,11 @@ def index():
 
         # Connect to the database
         conn = psycopg2.connect(
-            host="192.168.101.236",
-            port='5432',
-            database="lazada",
-            user="postgres",
-            password="123456",
+            host="192.168.xxx.xxx",
+            port='xxxx',
+            database="xxxx",
+            user="xxxx",
+            password="xxxx",
             
         )
 
@@ -123,11 +123,11 @@ def skus_search():
     offset = (page - 1) * limit
     filter1 = request.args.get('filter1', '').strip()
     conn = psycopg2.connect(
-        host="192.168.101.236",
-        port='5432',
+        host="192.168.xxx.xxx",
+        port='xxxx',
         database="lazada",
         user="postgres",
-        password="123456",
+        password="xxxx",
         
     )
     c = conn.cursor()
@@ -158,11 +158,11 @@ def skusxpath():
     filter = request.args.get('filter', '').strip()
     filter1 = request.args.get('filter1', '').strip()
     conn = psycopg2.connect(
-        host="192.168.101.236",
-        port='5432',
+        host="192.168.xxx.xxx",
+        port='xxxx',
         database="lazada",
         user="postgres",
-        password="123456",
+        password="xxxx",
         
     )
     c = conn.cursor()
@@ -184,11 +184,11 @@ def shopeecheckrun():
     daybefore = request.args.get('daybefore', '1').strip()
     filter1 = request.args.get('filter1', '').strip()
     conn = psycopg2.connect(
-        host="192.168.101.236",
-        port='5432',
+        host="192.168.xxx.xxx",
+        port='xxxx',
         database="lazada",
         user="postgres",
-        password="123456",
+        password="xxxx",
         
     )
     c = conn.cursor()
@@ -216,11 +216,11 @@ def export_to_xlsx():
 
     # Execute a SQL query and get the results
     conn = psycopg2.connect(
-        host="192.168.101.236",
-        port='5432',
+        host="192.168.xxx.xxx",
+        port='xxxx',
         database="lazada",
         user="postgres",
-        password="123456",
+        password="xxxx",
     )
     cur = conn.cursor()
     cur.execute(f'''select product_id, 
